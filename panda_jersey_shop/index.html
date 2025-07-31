@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panda Jersey - Premium Football Jerseys</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <div class="logo">
+            <img src="images/panda_logo.jpg" alt="Panda Logo" class="logo-img">
+            <span>Panda Jersey</span>
+        </div>
+            </div>
+            <div class="nav-search">
+                <input type="text" id="search-bar" placeholder="Search for football equipment...">
+                <button id="search-btn"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="nav-actions">
+                <button id="cart-btn" class="nav-btn">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Cart</span>
+                    <span id="cart-count" class="count">0</span>
+                </button>
+                <button id="wishlist-btn" class="nav-btn">
+                    <i class="fas fa-heart"></i>
+                    <span>Wishlist</span>
+                    <span id="wishlist-count" class="count">0</span>
+                </button>
+                <button id="login-btn" class="nav-btn">
+                    <i class="fas fa-user"></i>
+                    <span>Login</span>
+                </button>
+                <button id="signup-btn" class="nav-btn">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Sign Up</span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content">
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Premium Football Jerseys</h1>
+            <p>Discover authentic jerseys from the world's top football clubs</p>
+        </div>
+    </section>
+
+        <section class="products-section">
+            <div class="container">
+                <h3>Our Products</h3>
+                <div id="product-grid" class="product-grid">
+                    <!-- Product cards will be loaded here by JavaScript -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Product Detail Modal -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content product-detail">
+            <span class="close-button">&times;</span>
+            <div class="product-detail-content">
+                <div class="product-image-container">
+                    <img id="modal-product-image" src="" alt="">
+                </div>
+                <div class="product-info">
+                    <h2 id="modal-product-name"></h2>
+                    <p id="modal-product-description"></p>
+                    <div class="product-price">
+                        <span id="modal-product-price"></span>
+                    </div>
+                    <div class="product-actions">
+                        <button id="modal-cart-btn" class="btn btn-cart">
+                            <i class="fas fa-shopping-cart"></i>
+                            Add to Cart
+                        </button>
+                        <button id="modal-wishlist-btn" class="btn btn-wishlist">
+                            <i class="fas fa-heart"></i>
+                            Add to Wishlist
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div class="auth-form">
+                <h2>Login to Your Account</h2>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="login-username">Username</label>
+                        <input type="text" id="login-username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sign Up Modal -->
+    <div id="signup-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div class="auth-form">
+                <h2>Create New Account</h2>
+                <form id="signup-form">
+                    <div class="form-group">
+                        <label for="signup-username">Username</label>
+                        <input type="text" id="signup-username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-email">Email</label>
+                        <input type="email" id="signup-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Sign Up</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wishlist Modal -->
+    <div id="wishlist-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div class="wishlist-content">
+                <h2>Your Wishlist</h2>
+                <div id="wishlist-items" class="wishlist-items">
+                    <!-- Wishlist items will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div id="cart-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div class="cart-content">
+                <h2>Shopping Cart</h2>
+                <div id="cart-items" class="cart-items">
+                    <!-- Cart items will be loaded here -->
+                </div>
+                <div class="cart-summary">
+                    <div class="cart-total">
+                        <strong>Total: $<span id="cart-total">0.00</span></strong>
+                    </div>
+                    <button id="checkout-btn" class="btn btn-primary">
+                        <i class="fas fa-credit-card"></i>
+                        Proceed to Checkout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Panda Jersey. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#">About Us</a>
+                <a href="#">Contact</a>
+                <a href="#">Privacy Policy</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="products.js"></script>
+    <script src="api.js"></script>
+    <script src="script_backend.js"></script>
+</body>
+</html>
+
