@@ -1,11 +1,9 @@
-// API Service for Football Shop
 class ApiService {
     constructor() {
         this.baseURL = 'http://localhost:3000/api';
         this.token = localStorage.getItem('authToken');
     }
 
-    // Set authorization header
     getHeaders() {
         const headers = {
             'Content-Type': 'application/json'
@@ -16,7 +14,6 @@ class ApiService {
         return headers;
     }
 
-    // Handle API responses
     async handleResponse(response) {
         if (!response.ok) {
             const error = await response.json();
@@ -25,7 +22,6 @@ class ApiService {
         return response.json();
     }
 
-    // Authentication
     async register(userData) {
         const response = await fetch(`${this.baseURL}/auth/register`, {
             method: 'POST',
@@ -62,7 +58,6 @@ class ApiService {
         localStorage.removeItem('currentUser');
     }
 
-    // Products
     async getProducts() {
         const response = await fetch(`${this.baseURL}/products`);
         return this.handleResponse(response);
@@ -73,7 +68,6 @@ class ApiService {
         return this.handleResponse(response);
     }
 
-    // Cart
     async getCart() {
         const response = await fetch(`${this.baseURL}/cart`, {
             headers: this.getHeaders()
@@ -107,7 +101,6 @@ class ApiService {
         return this.handleResponse(response);
     }
 
-    // Wishlist
     async getWishlist() {
         const response = await fetch(`${this.baseURL}/wishlist`, {
             headers: this.getHeaders()
