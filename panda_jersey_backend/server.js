@@ -6,7 +6,6 @@ const path = require("path");
 const fs = require("fs");
 require("dotenv").config();
 
-// Import lowdb
 const { Low } = require('lowdb');
 const { JSONFile } = require('lowdb/node');
 
@@ -14,20 +13,16 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key-change-in-production";
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "../panda_jersey_shop")));
 
-// Database setup with lowdb
 const adapter = new JSONFile('./database.json');
 const db = new Low(adapter, {});
 
-// Initialize database
 async function initializeDatabase() {
     await db.read();
-    
-    // Set default data if database is empty
+
     if (!db.data) {
         db.data = {
             users: [],
@@ -37,13 +32,11 @@ async function initializeDatabase() {
         };
     }
 
-    // Ensure all arrays exist
     if (!db.data.users) db.data.users = [];
     if (!db.data.products) db.data.products = [];
     if (!db.data.cart) db.data.cart = [];
     if (!db.data.wishlist) db.data.wishlist = [];
 
-    // Insert sample products if products array is empty
     if (db.data.products.length === 0) {
         const products = [
             { id: 1, name: "Arsenal Home Jersey", description: "Official Arsenal home jersey 2024/25 season. Premium quality with Emirates sponsor.", price: 89.99, image: "images/arsenal_jersey.jpg", stock: 100 },
@@ -63,13 +56,11 @@ async function initializeDatabase() {
     }
 }
 
-// Helper functions for database operations
 function getNextId(collection) {
     if (!collection || collection.length === 0) return 1;
     return Math.max(...collection.map(item => item.id)) + 1;
 }
 
-// Middleware to verify JWT token
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1];
@@ -87,9 +78,7 @@ const authenticateToken = (req, res, next) => {
     });
 };
 
-// Routes
 
-// Get all products
 app.get("/api/products", async (req, res) => {
     try {
         await db.read();
@@ -99,7 +88,6 @@ app.get("/api/products", async (req, res) => {
     }
 });
 
-// Search products
 app.get("/api/products/search", async (req, res) => {
     const { q } = req.query;
     if (!q) {
@@ -119,7 +107,6 @@ app.get("/api/products/search", async (req, res) => {
     }
 });
 
-// User registration
 app.post("/api/auth/register", async (req, res) => {
     const { username, email, password } = req.body;
 
@@ -130,7 +117,6 @@ app.post("/api/auth/register", async (req, res) => {
     try {
         await db.read();
         
-        // Check if user already exists
         const users = db.data.users || [];
         const existingUser = users.find(user => 
             user.username === username || user.email === email
@@ -165,7 +151,6 @@ app.post("/api/auth/register", async (req, res) => {
     }
 });
 
-// User login
 app.post("/api/auth/login", async (req, res) => {
     const { username, password } = req.body;
 
@@ -203,13 +188,11 @@ app.post("/api/auth/login", async (req, res) => {
     }
 });
 
-// Get user cart
 app.get("/api/cart", authenticateToken, async (req, res) => {
     try {
         await db.read();
         const cartItems = (db.data.cart || []).filter(item => item.user_id === req.user.id);
         
-        // Join with products to get product details
         const cartWithProducts = cartItems.map(cartItem => {
             const product = (db.data.products || []).find(p => p.id === cartItem.product_id);
             return {
@@ -227,7 +210,6 @@ app.get("/api/cart", authenticateToken, async (req, res) => {
     }
 });
 
-// Add to cart
 app.post("/api/cart", authenticateToken, async (req, res) => {
     const { product_id, quantity = 1 } = req.body;
 
@@ -243,10 +225,8 @@ app.post("/api/cart", authenticateToken, async (req, res) => {
         );
 
         if (existingItemIndex !== -1) {
-            // Update quantity
             db.data.cart[existingItemIndex].quantity += quantity;
         } else {
-            // Add new item
             const newCartItem = {
                 id: getNextId(cart),
                 user_id: req.user.id,
@@ -264,7 +244,6 @@ app.post("/api/cart", authenticateToken, async (req, res) => {
     }
 });
 
-// Update cart item quantity
 app.put("/api/cart/:id", authenticateToken, async (req, res) => {
     const { quantity } = req.body;
     const cartId = parseInt(req.params.id);
@@ -292,7 +271,6 @@ app.put("/api/cart/:id", authenticateToken, async (req, res) => {
     }
 });
 
-// Remove from cart
 app.delete("/api/cart/:id", authenticateToken, async (req, res) => {
     const cartId = parseInt(req.params.id);
 
@@ -315,13 +293,11 @@ app.delete("/api/cart/:id", authenticateToken, async (req, res) => {
     }
 });
 
-// Get user wishlist
 app.get("/api/wishlist", authenticateToken, async (req, res) => {
     try {
         await db.read();
         const wishlistItems = (db.data.wishlist || []).filter(item => item.user_id === req.user.id);
         
-        // Join with products to get product details
         const wishlistWithProducts = wishlistItems.map(wishlistItem => {
             const product = (db.data.products || []).find(p => p.id === wishlistItem.product_id);
             return {
@@ -339,7 +315,6 @@ app.get("/api/wishlist", authenticateToken, async (req, res) => {
     }
 });
 
-// Add to wishlist
 app.post("/api/wishlist", authenticateToken, async (req, res) => {
     const { product_id } = req.body;
 
@@ -351,7 +326,6 @@ app.post("/api/wishlist", authenticateToken, async (req, res) => {
         await db.read();
         const wishlist = db.data.wishlist || [];
         
-        // Check if item already exists in wishlist
         const existingItem = wishlist.find(item => 
             item.user_id === req.user.id && item.product_id === product_id
         );
@@ -373,7 +347,6 @@ app.post("/api/wishlist", authenticateToken, async (req, res) => {
     }
 });
 
-// Remove from wishlist
 app.delete("/api/wishlist/:product_id", authenticateToken, async (req, res) => {
     const productId = parseInt(req.params.product_id);
 
@@ -396,12 +369,10 @@ app.delete("/api/wishlist/:product_id", authenticateToken, async (req, res) => {
     }
 });
 
-// Serve frontend
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "../panda_jersey_shop/index.html"));
 });
 
-// Initialize database and start server
 initializeDatabase().then(() => {
     app.listen(PORT, "0.0.0.0", () => {
         console.log(`Panda Jersey Backend running on http://localhost:${PORT}` );
