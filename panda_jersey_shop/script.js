@@ -1,11 +1,9 @@
-// Global variables
 let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
 let users = JSON.parse(localStorage.getItem('users')) || [];
 let filteredProducts = [...products];
 
-// DOM elements
 const productGrid = document.getElementById('product-grid');
 const searchBar = document.getElementById('search-bar');
 const searchBtn = document.getElementById('search-btn');
@@ -16,14 +14,12 @@ const wishlistCount = document.getElementById('wishlist-count');
 const loginBtn = document.getElementById('login-btn');
 const signupBtn = document.getElementById('signup-btn');
 
-// Modals
 const productModal = document.getElementById('product-modal');
 const loginModal = document.getElementById('login-modal');
 const signupModal = document.getElementById('signup-modal');
 const wishlistModal = document.getElementById('wishlist-modal');
 const cartModal = document.getElementById('cart-modal');
 
-// Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
     displayProducts(products);
     updateWishlistCount();
@@ -32,9 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
 });
 
-// Setup event listeners
 function setupEventListeners() {
-    // Search functionality
     searchBar.addEventListener('input', handleSearch);
     searchBtn.addEventListener('click', handleSearch);
     searchBar.addEventListener('keypress', function(e) {
@@ -43,32 +37,27 @@ function setupEventListeners() {
         }
     });
 
-    // Navigation buttons
     cartBtn.addEventListener('click', showCart);
     wishlistBtn.addEventListener('click', showWishlist);
     loginBtn.addEventListener('click', showLoginModal);
     signupBtn.addEventListener('click', showSignupModal);
 
-    // Modal close buttons
     document.querySelectorAll('.close-button').forEach(button => {
         button.addEventListener('click', function() {
             this.closest('.modal').style.display = 'none';
         });
     });
 
-    // Close modals when clicking outside
     window.addEventListener('click', function(e) {
         if (e.target.classList.contains('modal')) {
             e.target.style.display = 'none';
         }
     });
 
-    // Form submissions
     document.getElementById('login-form').addEventListener('submit', handleLogin);
     document.getElementById('signup-form').addEventListener('submit', handleSignup);
 }
 
-// Display products in the grid
 function displayProducts(productsToShow) {
     productGrid.innerHTML = '';
     
@@ -83,7 +72,6 @@ function displayProducts(productsToShow) {
     });
 }
 
-// Create a product card element
 function createProductCard(product) {
     const card = document.createElement('div');
     card.className = 'product-card';
@@ -117,7 +105,6 @@ function createProductCard(product) {
     return card;
 }
 
-// Show product detail modal
 function showProductDetail(product) {
     const modal = document.getElementById('product-modal');
     const isInWishlist = wishlist.some(item => item.id === product.id);
@@ -149,7 +136,6 @@ function showProductDetail(product) {
     modal.style.display = 'block';
 }
 
-// Handle search functionality
 function handleSearch() {
     const searchTerm = searchBar.value.toLowerCase().trim();
     
@@ -165,7 +151,6 @@ function handleSearch() {
     displayProducts(filteredProducts);
 }
 
-// Toggle wishlist item
 function toggleWishlist(productId) {
     const product = products.find(p => p.id === productId);
     const existingIndex = wishlist.findIndex(item => item.id === productId);
@@ -183,18 +168,15 @@ function toggleWishlist(productId) {
     updateCartCount(); // Also update cart count in case of changes
     displayProducts(filteredProducts); // Refresh the display
     
-    // Update modal if it's open
     if (productModal.style.display === 'block') {
         showProductDetail(product);
     }
 }
 
-// Update wishlist count display
 function updateWishlistCount() {
     wishlistCount.textContent = wishlist.length;
 }
 
-// Show wishlist modal
 function showWishlist() {
     const modal = document.getElementById('wishlist-modal');
     const wishlistItems = document.getElementById('wishlist-items');
@@ -219,18 +201,16 @@ function showWishlist() {
     modal.style.display = 'block';
 }
 
-// Remove item from wishlist
 function removeFromWishlist(productId) {
     wishlist = wishlist.filter(item => item.id !== productId);
     localStorage.setItem('wishlist', JSON.stringify(wishlist));
     updateWishlistCount();
-    updateCartCount(); // Also update cart count in case of changes
-    showWishlist(); // Refresh wishlist display
-    displayProducts(filteredProducts); // Refresh product display
+    updateCartCount(); 
+    showWishlist(); 
+    displayProducts(filteredProducts); 
     showMessage('Removed from wishlist!', 'success');
 }
 
-// Show login modal
 function showLoginModal() {
     if (currentUser) {
         logout();
@@ -239,12 +219,10 @@ function showLoginModal() {
     }
 }
 
-// Show signup modal
 function showSignupModal() {
     document.getElementById('signup-modal').style.display = 'block';
 }
 
-// Handle login
 function handleLogin(e) {
     e.preventDefault();
     
@@ -265,7 +243,6 @@ function handleLogin(e) {
     }
 }
 
-// Handle signup
 function handleSignup(e) {
     e.preventDefault();
     
@@ -273,19 +250,16 @@ function handleSignup(e) {
     const email = document.getElementById('signup-email').value;
     const password = document.getElementById('signup-password').value;
     
-    // Check if username already exists
     if (users.some(u => u.username === username)) {
         showMessage('Username already exists!', 'error');
         return;
     }
     
-    // Check if email already exists
     if (users.some(u => u.email === email)) {
         showMessage('Email already registered!', 'error');
         return;
     }
     
-    // Create new user
     const newUser = {
         id: Date.now(),
         username,
@@ -305,7 +279,6 @@ function handleSignup(e) {
     document.getElementById('signup-form').reset();
 }
 
-// Logout
 function logout() {
     currentUser = null;
     localStorage.removeItem('currentUser');
@@ -313,7 +286,6 @@ function logout() {
     showMessage('Logged out successfully!', 'success');
 }
 
-// Update authentication buttons
 function updateAuthButtons() {
     if (currentUser) {
         loginBtn.innerHTML = `
@@ -330,9 +302,7 @@ function updateAuthButtons() {
     }
 }
 
-// Show message
 function showMessage(text, type) {
-    // Remove existing messages
     const existingMessages = document.querySelectorAll('.message');
     existingMessages.forEach(msg => msg.remove());
     
@@ -340,17 +310,14 @@ function showMessage(text, type) {
     message.className = `message ${type}`;
     message.textContent = text;
     
-    // Insert at the top of the main content
     const mainContent = document.querySelector('.main-content');
     mainContent.insertBefore(message, mainContent.firstChild);
     
-    // Auto remove after 3 seconds
     setTimeout(() => {
         message.remove();
     }, 3000);
 }
 
-// Utility function to format currency
 function formatCurrency(amount) {
     return new Intl.NumberFormat('en-US', {
         style: 'currency',
@@ -358,7 +325,6 @@ function formatCurrency(amount) {
     }).format(amount);
 }
 
-// Add some demo users for testing
 if (users.length === 0) {
     users = [
         {
@@ -377,10 +343,8 @@ if (users.length === 0) {
     localStorage.setItem('users', JSON.stringify(users));
 }
 
-// Add keyboard navigation for accessibility
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
-        // Close any open modal
         document.querySelectorAll('.modal').forEach(modal => {
             if (modal.style.display === 'block') {
                 modal.style.display = 'none';
@@ -389,7 +353,6 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
-// Smooth scrolling for internal links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
@@ -402,7 +365,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Add loading states for better UX
 function showLoading(element) {
     const originalContent = element.innerHTML;
     element.innerHTML = '<span class="loading"></span>';
@@ -414,7 +376,6 @@ function showLoading(element) {
     };
 }
 
-// Performance optimization: Debounce search
 function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -427,13 +388,11 @@ function debounce(func, wait) {
     };
 }
 
-// Apply debounce to search
 const debouncedSearch = debounce(handleSearch, 300);
 searchBar.addEventListener('input', debouncedSearch);
 
 
 
-// Cart functionality
 function addToCart(productId) {
     const product = products.find(p => p.id === productId);
     const existingItem = cart.find(item => item.id === productId);
@@ -453,7 +412,6 @@ function addToCart(productId) {
     updateCartCount();
     displayProducts(filteredProducts); // Refresh the display
     
-    // Update modal if it's open
     if (productModal.style.display === 'block') {
         showProductDetail(product);
     }
@@ -514,8 +472,8 @@ function updateQuantity(productId, change) {
         }
         localStorage.setItem('cart', JSON.stringify(cart));
         updateCartCount();
-        showCart(); // Refresh cart display
-        displayProducts(filteredProducts); // Refresh product display
+        showCart(); 
+        displayProducts(filteredProducts);
     }
 }
 
@@ -523,8 +481,8 @@ function removeFromCart(productId) {
     cart = cart.filter(item => item.id !== productId);
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartCount();
-    showCart(); // Refresh cart display
-    displayProducts(filteredProducts); // Refresh product display
+    showCart(); 
+    displayProducts(filteredProducts); 
     showMessage('Removed from cart!', 'success');
 }
 
