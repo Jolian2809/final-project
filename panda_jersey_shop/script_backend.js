@@ -1,4 +1,3 @@
-// Global variables
 let wishlist = [];
 let cart = [];
 let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
@@ -6,7 +5,6 @@ let users = JSON.parse(localStorage.getItem('users')) || [];
 let filteredProducts = [];
 let allProducts = [];
 
-// DOM elements
 const productGrid = document.getElementById('product-grid');
 const searchBar = document.getElementById('search-bar');
 const searchBtn = document.getElementById('search-btn');
@@ -17,14 +15,12 @@ const wishlistCount = document.getElementById('wishlist-count');
 const loginBtn = document.getElementById('login-btn');
 const signupBtn = document.getElementById('signup-btn');
 
-// Modals
 const productModal = document.getElementById('product-modal');
 const loginModal = document.getElementById('login-modal');
 const signupModal = document.getElementById('signup-modal');
 const wishlistModal = document.getElementById('wishlist-modal');
 const cartModal = document.getElementById('cart-modal');
 
-// Initialize the application
 document.addEventListener('DOMContentLoaded', async function() {
     try {
         await loadProducts();
@@ -39,7 +35,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 });
 
-// Load products from API
 async function loadProducts() {
     try {
         allProducts = await apiService.getProducts();
@@ -47,14 +42,12 @@ async function loadProducts() {
         displayProducts(filteredProducts);
     } catch (error) {
         console.error('Failed to load products:', error);
-        // Fallback to local products if API fails
         allProducts = [...products];
         filteredProducts = [...products];
         displayProducts(filteredProducts);
     }
 }
 
-// Load user-specific data
 async function loadUserData() {
     try {
         if (currentUser) {
@@ -69,9 +62,7 @@ async function loadUserData() {
     }
 }
 
-// Setup event listeners
 function setupEventListeners() {
-    // Search functionality
     searchBtn.addEventListener('click', handleSearch);
     searchBar.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
@@ -79,32 +70,27 @@ function setupEventListeners() {
         }
     });
 
-    // Navigation buttons
     cartBtn.addEventListener('click', showCart);
     wishlistBtn.addEventListener('click', showWishlist);
     loginBtn.addEventListener('click', showLoginModal);
     signupBtn.addEventListener('click', showSignupModal);
 
-    // Modal close buttons
     document.querySelectorAll('.close-button').forEach(button => {
         button.addEventListener('click', function() {
             this.closest('.modal').style.display = 'none';
         });
     });
 
-    // Close modals when clicking outside
     window.addEventListener('click', function(event) {
         if (event.target.classList.contains('modal')) {
             event.target.style.display = 'none';
         }
     });
 
-    // Form submissions
     document.getElementById('login-form').addEventListener('submit', handleLogin);
     document.getElementById('signup-form').addEventListener('submit', handleSignup);
 }
 
-// Display products
 function displayProducts(productsToShow) {
     productGrid.innerHTML = '';
     productsToShow.forEach(product => {
@@ -113,7 +99,6 @@ function displayProducts(productsToShow) {
     });
 }
 
-// Create product card
 function createProductCard(product) {
     const card = document.createElement('div');
     card.className = 'product-card';
@@ -147,7 +132,6 @@ function createProductCard(product) {
     return card;
 }
 
-// Show product detail modal
 function showProductDetail(product) {
     const modal = document.getElementById('product-modal');
     const isInWishlist = wishlist.some(item => item.product_id === product.id || item.id === product.id);
@@ -179,7 +163,6 @@ function showProductDetail(product) {
     modal.style.display = 'block';
 }
 
-// Handle search functionality
 async function handleSearch() {
     const query = searchBar.value.trim();
     
@@ -190,7 +173,6 @@ async function handleSearch() {
             if (currentUser) {
                 filteredProducts = await apiService.searchProducts(query);
             } else {
-                // Fallback to local search
                 filteredProducts = allProducts.filter(product => 
                     product.name.toLowerCase().includes(query.toLowerCase()) ||
                     product.description.toLowerCase().includes(query.toLowerCase())
@@ -198,7 +180,6 @@ async function handleSearch() {
             }
         } catch (error) {
             console.error('Search failed:', error);
-            // Fallback to local search
             filteredProducts = allProducts.filter(product => 
                 product.name.toLowerCase().includes(query.toLowerCase()) ||
                 product.description.toLowerCase().includes(query.toLowerCase())
@@ -209,7 +190,6 @@ async function handleSearch() {
     displayProducts(filteredProducts);
 }
 
-// Cart functionality
 async function addToCart(productId) {
     if (!currentUser) {
         showMessage('Please login to add items to cart', 'error');
@@ -219,11 +199,10 @@ async function addToCart(productId) {
 
     try {
         await apiService.addToCart(productId, 1);
-        await loadUserData(); // Refresh cart data
-        displayProducts(filteredProducts); // Refresh display
+        await loadUserData(); 
+        displayProducts(filteredProducts);
         showMessage('Added to cart!', 'success');
         
-        // Update modal if it's open
         if (productModal.style.display === 'block') {
             const product = allProducts.find(p => p.id === productId);
             if (product) showProductDetail(product);
@@ -294,8 +273,8 @@ async function updateQuantity(cartId, newQuantity) {
     try {
         await apiService.updateCartItem(cartId, newQuantity);
         await loadUserData();
-        showCart(); // Refresh cart display
-        displayProducts(filteredProducts); // Refresh product display
+        showCart(); 
+        displayProducts(filteredProducts); 
     } catch (error) {
         console.error('Failed to update quantity:', error);
         showMessage('Failed to update quantity', 'error');
@@ -306,8 +285,8 @@ async function removeFromCart(cartId) {
     try {
         await apiService.removeFromCart(cartId);
         await loadUserData();
-        showCart(); // Refresh cart display
-        displayProducts(filteredProducts); // Refresh product display
+        showCart(); 
+        displayProducts(filteredProducts); 
         showMessage('Removed from cart!', 'success');
     } catch (error) {
         console.error('Failed to remove from cart:', error);
@@ -315,7 +294,6 @@ async function removeFromCart(cartId) {
     }
 }
 
-// Wishlist functionality
 async function toggleWishlist(productId) {
     if (!currentUser) {
         showMessage('Please login to manage wishlist', 'error');
@@ -337,7 +315,6 @@ async function toggleWishlist(productId) {
         await loadUserData();
         displayProducts(filteredProducts);
         
-        // Update modal if it's open
         if (productModal.style.display === 'block') {
             const product = allProducts.find(p => p.id === productId);
             if (product) showProductDetail(product);
@@ -387,8 +364,8 @@ async function removeFromWishlist(productId) {
     try {
         await apiService.removeFromWishlist(productId);
         await loadUserData();
-        showWishlist(); // Refresh wishlist display
-        displayProducts(filteredProducts); // Refresh product display
+        showWishlist(); 
+        displayProducts(filteredProducts); 
         showMessage('Removed from wishlist!', 'success');
     } catch (error) {
         console.error('Failed to remove from wishlist:', error);
@@ -396,7 +373,6 @@ async function removeFromWishlist(productId) {
     }
 }
 
-// Authentication
 function showLoginModal() {
     document.getElementById('login-modal').style.display = 'block';
 }
@@ -417,7 +393,7 @@ async function handleLogin(e) {
         updateAuthButtons();
         document.getElementById('login-modal').style.display = 'none';
         showMessage(`Welcome back, ${currentUser.username}!`, 'success');
-        displayProducts(filteredProducts); // Refresh display
+        displayProducts(filteredProducts);
     } catch (error) {
         console.error('Login failed:', error);
         showMessage(error.message || 'Login failed', 'error');
@@ -437,7 +413,7 @@ async function handleSignup(e) {
         updateAuthButtons();
         document.getElementById('signup-modal').style.display = 'none';
         showMessage(`Welcome, ${currentUser.username}!`, 'success');
-        displayProducts(filteredProducts); // Refresh display
+        displayProducts(filteredProducts); 
     } catch (error) {
         console.error('Signup failed:', error);
         showMessage(error.message || 'Signup failed', 'error');
@@ -469,9 +445,7 @@ function updateAuthButtons() {
     }
 }
 
-// Utility functions
 function showMessage(message, type = 'info') {
-    // Create message element
     const messageEl = document.createElement('div');
     messageEl.className = `message message-${type}`;
     messageEl.innerHTML = `
@@ -479,10 +453,8 @@ function showMessage(message, type = 'info') {
         <button onclick="this.parentElement.remove()">&times;</button>
     `;
     
-    // Add to page
     document.body.appendChild(messageEl);
     
-    // Auto remove after 5 seconds
     setTimeout(() => {
         if (messageEl.parentElement) {
             messageEl.remove();
